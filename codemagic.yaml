@@ -5,9 +5,11 @@ workflows:
     environment:
       ios_signing:
         distribution_type: development
+        bundle_identifier: "com.xava.app"
       vars:
         XCODE_PROJECT: "Xava.xcodeproj"
         XCODE_SCHEME: "Xava"
+      xcode: latest
     scripts:
       - name: Build iOS app
         script: |
@@ -19,4 +21,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - твоя_почта@example.com
+          - xava.build@example.com
