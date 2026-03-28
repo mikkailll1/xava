@@ -1,0 +1,147 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: designers
+    // Document ID: designerId
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required)
+    //   - brandName: string (required)
+    //   - avatar: string
+    //   - cover: string
+    //   - bio: string
+    //   - philosophy: string
+    //   - country: string
+    //   - followers: number
+    //
+    // Collection: products
+    // Document ID: productId
+    // Fields:
+    //   - id: string (required)
+    //   - designerId: string (required)
+    //   - name: string (required)
+    //   - modelName: string
+    //   - price: number (required)
+    //   - images: list
+    //   - sizes: list
+    //   - description: string
+    //   - materials: string
+    //   - care: string
+    //   - category: string
+    //   - isNew: bool
+    //   - reviews: list (objects)
+    //
+    // Collection: collections
+    // Document ID: collectionId
+    // Fields:
+    //   - id: string (required)
+    //   - designerId: string (required)
+    //   - name: string (required)
+    //   - season: string
+    //   - year: number
+    //   - image: string
+    //
+    // Collection: users
+    // Document ID: userId
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required)
+    //   - email: string (required)
+    //   - avatar: string
+    //   - role: string
+    //   - addresses: list
+    //   - likedProducts: list
+    //   - favoriteProducts: list
+    //   - subscribedDesigners: list
+    //   - viewedDesigners: list
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isDefaultAdmin() {
+      return isAuthenticated() &&
+             request.auth.token.email == "tazabievvv@gmail.com" &&
+             request.auth.token.email_verified == true;
+    }
+    function isAdmin() {
+      return isDefaultAdmin() ||
+             (isAuthenticated() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+    function isValidString(field, min, max) {
+      return request.resource.data[field] is string &&
+             request.resource.data[field].size() >= min &&
+             request.resource.data[field].size() <= max;
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidDesigner(data) {
+      return hasOnlyAllowedFields(['id', 'name', 'brandName', 'avatar', 'cover', 'bio', 'philosophy', 'country', 'followers']) &&
+             data.id is string && data.name is string && data.brandName is string;
+    }
+    function isValidProduct(data) {
+      return hasOnlyAllowedFields(['id', 'designerId', 'name', 'modelName', 'price', 'images', 'sizes', 'description', 'materials', 'care', 'category', 'isNew', 'reviews']) &&
+             data.id is string && data.designerId is string && data.name is string && data.price is number;
+    }
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['id', 'name', 'email', 'avatar', 'role', 'addresses', 'paymentMethods', 'orders', 'likedProducts', 'favoriteProducts', 'subscribedDesigners', 'viewedDesigners']) &&
+             data.id is string && data.name is string && data.email is string &&
+             (data.role == 'user' || data.role == 'admin' || data.role == 'designer');
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /test/connection {
+      allow read: if true;
+    }
+
+    match /designers/{designerId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /collections/{collectionId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data) && 
+                    (request.resource.data.role == 'user' || isDefaultAdmin());
+      allow update: if (isOwner(userId) && isValidUser(request.resource.data) && request.resource.data.role == resource.data.role) || isAdmin();
+    }
+
+    // Default deny
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

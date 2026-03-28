@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Pinyon Script", cursive;
+  --color-accent: #fce4ec; /* Soft pink */
+  --color-accent-dark: #f8bbd0;
+}
+
+@layer base {
+  body {
+    background-color: #05070a;
+    color: #ffffff;
+    @apply font-sans antialiased overflow-x-hidden transition-colors duration-500;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/10 backdrop-blur-xl border border-white/10 shadow-none;
+  }
+  
+  .glass-dark {
+    @apply bg-black/80 backdrop-blur-xl border border-white/10 shadow-lg;
+  }
+
+  .apple-button {
+    @apply px-6 py-3 rounded-full font-medium transition-all duration-300 active:scale-95;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Starry Sky Background */
+.star-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at top, #0d1b2a 0%, #05070a 100%);
+  overflow: hidden;
+  z-index: -1;
+}
+
+.aurora {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 255, 150, 0.15) 0%,
+    rgba(0, 200, 255, 0.1) 25%,
+    rgba(100, 0, 255, 0.05) 50%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  animation: aurora-move 20s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes aurora-move {
+  0% { transform: translate(-10%, -10%) rotate(0deg) scale(1); }
+  100% { transform: translate(10%, 10%) rotate(10deg) scale(1.1); }
+}
+
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/123163/stars.png') repeat top center;
+  z-index: 1;
+  opacity: 0.5;
+  animation: move-stars 200s linear infinite;
+}
+
+.twinkling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/123163/twinkling.png') repeat top center;
+  z-index: 2;
+  opacity: 0.3;
+  animation: move-twink-back 200s linear infinite;
+}
+
+@keyframes move-stars {
+  from { background-position: 0 0; }
+  to { background-position: -10000px 5000px; }
+}
+
+@keyframes move-twink-back {
+  from { background-position: 0 0; }
+  to { background-position: -10000px 5000px; }
+}
+
+/* Shimmering Gradient */
+.shimmer-bg {
+  background: linear-gradient(
+    -45deg,
+    #000000,
+    #1a1a1a,
+    #0d0d0d,
+    #000000
+  );
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+.shimmer-bg-light {
+  background: linear-gradient(
+    -45deg,
+    #f5f5f7,
+    #ffffff,
+    #e8e8ed,
+    #f5f5f7
+  );
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.rare-card {
+  @apply relative overflow-hidden border-2 border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-transparent;
+}
+
+.rare-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+/* Pinterest-like grid layout using CSS columns for better masonry effect */
+.masonry-grid {
+  column-count: 2;
+  column-gap: 8px;
+  width: 100%;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  display: block;
+  width: 100%;
+}
+
+.pinterest-save-btn {
+  @apply bg-[#E60023] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg active:scale-95 transition-all duration-200;
+}
+
+.pinterest-tab {
+  @apply px-4 py-2 rounded-full text-sm font-bold transition-all duration-200;
+}
+
+.pinterest-tab-active {
+  @apply bg-white text-black;
+}
+
+.pinterest-tab-inactive {
+  @apply text-white/60 hover:bg-white/10;
+}
+
+/* Mobile-only container simulation for desktop */
+.mobile-container {
+  max-width: 450px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100vh;
+  position: relative;
+  background-color: #05070a;
+  box-shadow: 0 0 100px rgba(0,0,0,0.8);
+  overflow: hidden;
+  border-left: 1px solid rgba(255,255,255,0.05);
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.mobile-container::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 451px) {
+  body {
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+}

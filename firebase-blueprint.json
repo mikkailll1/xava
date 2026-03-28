@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "Designer": {
+      "title": "Designer",
+      "description": "A fashion designer on the platform.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "brandName": { "type": "string" },
+        "avatar": { "type": "string" },
+        "cover": { "type": "string" },
+        "bio": { "type": "string" },
+        "philosophy": { "type": "string" },
+        "country": { "type": "string" },
+        "followers": { "type": "number" }
+      },
+      "required": ["id", "name", "brandName"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "A fashion item listed by a designer.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "designerId": { "type": "string" },
+        "name": { "type": "string" },
+        "modelName": { "type": "string" },
+        "price": { "type": "number" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "sizes": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "materials": { "type": "string" },
+        "care": { "type": "string" },
+        "category": { "type": "string" },
+        "isNew": { "type": "boolean" },
+        "reviews": { "type": "array", "items": { "$ref": "Review" } }
+      },
+      "required": ["id", "designerId", "name", "price"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "A user review for a product.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "date": { "type": "string" }
+      },
+      "required": ["id", "userId", "rating"]
+    },
+    "Collection": {
+      "title": "Collection",
+      "description": "A seasonal collection of products.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "designerId": { "type": "string" },
+        "name": { "type": "string" },
+        "season": { "type": "string" },
+        "year": { "type": "number" },
+        "image": { "type": "string" }
+      },
+      "required": ["id", "designerId", "name"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "A user's profile and settings.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "avatar": { "type": "string" },
+        "role": { "type": "string" },
+        "addresses": { "type": "array", "items": { "type": "string" } },
+        "likedProducts": { "type": "array", "items": { "type": "string" } },
+        "favoriteProducts": { "type": "array", "items": { "type": "string" } },
+        "subscribedDesigners": { "type": "array", "items": { "type": "string" } },
+        "viewedDesigners": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["id", "name", "email"]
+    }
+  },
+  "firestore": {
+    "/designers/{designerId}": {
+      "schema": "Designer",
+      "description": "Designers collection."
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Products collection."
+    },
+    "/collections/{collectionId}": {
+      "schema": "Collection",
+      "description": "Collections collection."
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles collection."
+    }
+  }
+}
