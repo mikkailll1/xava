@@ -5,7 +5,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: development
-        bundle_identifier: "misamitma@icloud.com"
+        bundle_identifier: "com.xava.misamitma"
       vars:
         XCODE_PROJECT: "Xava.xcodeproj"
         XCODE_SCHEME: "Xava"
@@ -21,4 +21,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - tazabievvv@gamil.com
+          - misamitma@icloud.com
